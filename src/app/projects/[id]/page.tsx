@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import { Project, Task } from '@/types'
 import { GanttChart } from '@/components/gantt/GanttChart'
 import { TaskCard } from '@/components/task/TaskCard'
-import { Calendar, Users, CheckCircle, Clock } from 'lucide-react'
+import { Calendar, CheckCircle, Clock } from 'lucide-react'
 
 export default function ProjectDetailPage() {
   const params = useParams()

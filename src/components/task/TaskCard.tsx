@@ -1,7 +1,7 @@
 'use client'
 
 import { Task, TaskStatus, Priority } from '@/types'
-import { taskStatusColors, priorityColors, formatDate, getDaysUntil, isOverdue } from '@/lib/utils'
+import { taskStatusColors, priorityColors, getDaysUntil, isOverdue } from '@/lib/utils'
 import { Trash2, Edit2, MessageCircle, Clock } from 'lucide-react'
 
 interface TaskCardProps {
