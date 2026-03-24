@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply antialiased;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white;
+}
+
+/* Gantt Chart Styles */
+.gantt-container {
+  @apply overflow-x-auto bg-white rounded-lg border border-gray-200;
+}
+
+.gantt-bar {
+  @apply rounded-md transition-all duration-200 hover:shadow-lg;
+}
+
+.gantt-bar-todo {
+  @apply bg-gray-300;
+}
+
+.gantt-bar-in-production {
+  @apply bg-blue-500;
+}
+
+.gantt-bar-sent-to-client {
+  @apply bg-purple-500;
+}
+
+.gantt-bar-waiting-feedback {
+  @apply bg-yellow-500;
+}
+
+.gantt-bar-making-changes {
+  @apply bg-orange-500;
+}
+
+.gantt-bar-submitting-final {
+  @apply bg-green-500;
+}
+
+.gantt-bar-round-two-review {
+  @apply bg-indigo-500;
+}
+
+.gantt-bar-approved {
+  @apply bg-emerald-500;
+}
+
+.gantt-bar-needs-printing {
+  @apply bg-pink-500;
+}
+
+.gantt-bar-launched {
+  @apply bg-teal-500;
+}
+
+/* Toast Notifications */
+.toast-container {
+  @apply fixed top-4 right-4 z-50 flex flex-col gap-2;
+}
+
+.toast {
+  @apply bg-white rounded-lg shadow-lg p-4 border-l-4;
+}
+
+.toast-success {
+  @apply border-green-500;
+}
+
+.toast-error {
+  @apply border-red-500;
+}
+
+.toast-info {
+  @apply border-blue-500;
+}
+
+/* Loading Skeleton */
+.skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+/* Smooth Transitions */
+.transition-smooth {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded-full hover:bg-gray-500;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    @apply opacity-0 -translate-y-2;
+  }
+  to {
+    @apply opacity-100 translate-y-0;
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Gradient Backgrounds */
+.gradient-primary {
+  @apply bg-gradient-to-r from-blue-600 to-indigo-600;
+}
+
+.gradient-accent {
+  @apply bg-gradient-to-r from-pink-500 to-purple-600;
+}

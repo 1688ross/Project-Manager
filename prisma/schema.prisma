@@ -1,0 +1,262 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ma/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  password  String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  role      String     @default("TEAM_MEMBER")
+  
+  // Relations
+  ownedProjects  Project[]        @relation("ProjectOwner")
+  assignedTasks  Task[]           @relation("TaskAssignee")
+  createdTasks   Task[]           @relation("TaskCreator")
+  profile        UserProfile?
+  notifications  Notification[]
+  teamMembers    Team[]           @relation("TeamMember")
+  teams          Team[]           @relation("TeamOwner")
+  googleAuth     GoogleAuth?
+  comments       Comment[]
+}
+
+model UserProfile {
+  id                String  @id @default(cuid())
+  userId            String  @unique
+  avatar            String?
+  bio               String?
+  theme             String  @default("light")
+  ganttChartLayout  String  @default("compressed")
+  defaultView       String  @default("gantt")
+  emailNotifications Boolean @default(true)
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GoogleAuth {
+  id           String  @id @default(cuid())
+  userId       String  @unique
+  accessToken  String?
+  refreshToken String?
+  expiresAt    DateTime?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Team {
+  id        String     @id @default(cuid())
+  name      String
+  ownerId   String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  owner   User      @relation("TeamOwner", fields: [ownerId], references: [id])
+  members User[]    @relation("TeamMember")
+  projects Project[]
+}
+
+model Project {
+  id            String          @id @default(cuid())
+  title         String
+  description   String?
+  ownerId       String
+  teamId        String?
+  clientId      String?
+  status        String          @default("ACTIVE")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  startDate     DateTime?
+  endDate       DateTime?
+  
+  owner         User            @relation("ProjectOwner", fields: [ownerId], references: [id])
+  team          Team?           @relation(fields: [teamId], references: [id])
+  client        ClientAccount?  @relation(fields: [clientId], references: [id])
+  tasks         Task[]
+  assets        Asset[]
+  timeline      Timeline?
+  brandGuide    BrandGuide?
+  
+  @@index([ownerId])
+  @@index([teamId])
+}
+
+model ClientAccount {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  logo        String?
+  accessToken String?
+  createdAt   DateTime @default(now())
+  
+  projects Project[]
+  branding BrandGuide[]
+  
+  @@index([email])
+}
+
+model Task {
+  id            String       @id @default(cuid())
+  title         String
+  description   String?
+  projectId     String
+  assigneeId    String?
+  creatorId     String
+  status        String       @default("TODO")
+  priority      String       @default("MEDIUM")
+  dueDate       DateTime?
+  startDate     DateTime?
+  estimatedHours Float?
+  actualHours   Float?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  
+  project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee      User?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  creator       User         @relation("TaskCreator", fields: [creatorId], references: [id])
+  subtasks      SubTask[]
+  comments      Comment[]
+  files         TaskFile[]
+  notifications Notification[]
+  history       MilestoneHistory[]
+  
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([status])
+}
+
+model SubTask {
+  id        String   @id @default(cuid())
+  title     String
+  taskId    String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model MilestoneHistory {
+  id            String   @id @default(cuid())
+  taskId        String
+  eventType     String   // "SUBMITTED" (→), "FEEDBACK" (←), "APPROVED" (●)
+  dateOccurred  DateTime
+  notes         String?  // Client feedback or change requests
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  @@index([taskId])
+  @@index([dateOccurred])
+}
+
+model Timeline {
+  id        String       @id @default(cuid())
+  projectId String       @unique
+  
+  // Timeline stages
+  internalReviewDate   DateTime?
+  clientDraftDate      DateTime?
+  feedbackDeadline     DateTime?
+  revisionsDeadline    DateTime?
+  roundTwoReviewDate   DateTime?
+  finalSubmissionDate  DateTime?
+  launchDate           DateTime?
+  
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model BrandGuide {
+  id           String   @id @default(cuid())
+  projectId    String   @unique
+  clientId     String?
+  
+  // Branding elements
+  logo         String?
+  primaryColor String?
+  secondaryColor String?
+  accentColor  String?
+  fonts        String?
+  guidelines   String?  // JSON format for brand guidelines
+  
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  client       ClientAccount? @relation(fields: [clientId], references: [id])
+}
+
+model Asset {
+  id           String   @id @default(cuid())
+  projectId    String
+  clientId     String?
+  name         String
+  fileType     String
+  fileSize     Int
+  fileUrl      String
+  googleDriveId String?
+  category     String
+  createdAt    DateTime @default(now())
+  uploadedBy   String?
+  
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@index([projectId])
+  @@index([category])
+}
+
+model TaskFile {
+  id        String   @id @default(cuid())
+  taskId    String
+  fileUrl   String
+  fileName  String
+  fileSize  Int
+  fileType  String
+  createdAt DateTime @default(now())
+  
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  taskId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+  
+  @@index([taskId])
+  @@index([userId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  taskId    String?
+  type      String
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task? @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+// String Enum Values (for SQLite compatibility)
+// UserRole: ADMIN, TEAM_LEAD, TEAM_MEMBER, CLIENT
+// ProjectStatus: ACTIVE, ARCHIVED, COMPLETED, ON_HOLD
+// TaskStatus: TODO, IN_PRODUCTION, SENT_TO_CLIENT, WAITING_FEEDBACK, MAKING_CHANGES, SUBMITTING_FINAL, SUBMITTING_ROUND_TWO, APPROVED, NEEDS_PRINTING, LAUNCHED, COMPLETED
+// Priority: LOW, MEDIUM, HIGH, URGENT
+// AssetCategory: BRANDING, MOCKUP, DRAFT, APPROVED, FINAL, ARCHIVE, CLIENT_PROVIDED
+// NotificationType: TASK_ASSIGNED, TASK_UPDATED, COMMENT_ADDED, DEADLINE_APPROACHING, STATUS_CHANGED, FEEDBACK_RECEIVED
