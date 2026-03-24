@@ -165,14 +165,14 @@ async function createMilestoneHistoryFromAnalysis(
     // Try to find related tasks by matching email subject/body with task titles
     const emailText = `${email.subject} ${email.body}`.toLowerCase()
     targetTaskIds = recentTasks
-      .filter(task => {
+      .filter((task: any) => {
         const taskTitle = task.title.toLowerCase()
         return (
           taskTitle.length > 3 &&
           emailText.includes(taskTitle)
         )
       })
-      .map(t => t.id)
+      .map((t: any) => t.id)
       .slice(0, 3) // Limit to top 3 matches
   }
 
