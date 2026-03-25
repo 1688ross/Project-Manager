@@ -1,51 +1,165 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useEffect, useState, useCallback } from 'react'
+import { useParams, useRouter } from 'next/navigation'
 import { Project, Task } from '@/types'
 import { GanttChart } from '@/components/gantt/GanttChart'
 import { TaskCard } from '@/components/task/TaskCard'
-import { Calendar, CheckCircle, Clock } from 'lucide-react'
+import { TaskDetailModal } from '@/components/task/TaskDetailModal'
+import { TaskForm } from '@/components/forms/TaskForm'
+import { ProjectForm } from '@/components/forms/ProjectForm'
+import { Calendar, CheckCircle, Clock, Plus, Pencil, Trash2, X, ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
+
+type ModalState = 'none' | 'addTask' | 'editTask' | 'taskDetail' | 'editProject' | 'deleteConfirm'
 
 export default function ProjectDetailPage() {
   const params = useParams()
+  const router = useRouter()
   const projectId = params.id as string
   const [project, setProject] = useState<Project | null>(null)
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const [projectRes, tasksRes] = await Promise.all([
-          fetch(`/api/projects/${projectId}`),
-          fetch(`/api/tasks?projectId=${projectId}`),
-        ])
+  // Modal state
+  const [modal, setModal] = useState<ModalState>('none')
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [saving, setSaving] = useState(false)
 
-        if (!projectRes.ok) {
-          throw new Error('Project not found')
-        }
+  const fetchData = useCallback(async () => {
+    try {
+      const [projectRes, tasksRes] = await Promise.all([
+        fetch(`/api/projects/${projectId}`),
+        fetch(`/api/tasks?projectId=${projectId}`),
+      ])
 
-        const projectData = await projectRes.json()
-        setProject(projectData.data)
+      if (!projectRes.ok) throw new Error('Project not found')
 
-        if (tasksRes.ok) {
-          const tasksData = await tasksRes.json()
-          setTasks(Array.isArray(tasksData.data) ? tasksData.data : [])
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load project')
-      } finally {
-        setLoading(false)
+      const projectData = await projectRes.json()
+      setProject(projectData.data)
+
+      if (tasksRes.ok) {
+        const tasksData = await tasksRes.json()
+        setTasks(Array.isArray(tasksData.data) ? tasksData.data : [])
       }
-    }
-
-    if (projectId) {
-      fetchData()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load project')
+    } finally {
+      setLoading(false)
     }
   }, [projectId])
+
+  useEffect(() => {
+    if (projectId) fetchData()
+  }, [projectId, fetchData])
+
+  const closeModal = () => {
+    setModal('none')
+    setSelectedTask(null)
+  }
+
+  // --- Task CRUD ---
+  const handleCreateTask = async (formData: Partial<Task>) => {
+    setSaving(true)
+    try {
+      const res = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          projectId,
+          creatorId: 'user-demo',
+        }),
+      })
+      if (!res.ok) throw new Error('Failed to create task')
+      closeModal()
+      await fetchData()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to create task')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleUpdateTask = async (formData: Partial<Task>) => {
+    if (!selectedTask) return
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/tasks/${selectedTask.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      if (!res.ok) throw new Error('Failed to update task')
+      closeModal()
+      await fetchData()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to update task')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (!confirm('Delete this task? This cannot be undone.')) return
+    try {
+      const res = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete task')
+      await fetchData()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete task')
+    }
+  }
+
+  const handleStatusChange = async (taskId: string, status: string) => {
+    try {
+      const res = await fetch(`/api/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      })
+      if (!res.ok) throw new Error('Failed to update status')
+      await fetchData()
+      // Update selectedTask if modal is open
+      if (selectedTask?.id === taskId) {
+        setSelectedTask(prev => prev ? { ...prev, status: status as Task['status'] } : null)
+      }
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to update status')
+    }
+  }
+
+  // --- Project CRUD ---
+  const handleUpdateProject = async (formData: Partial<Project>) => {
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      if (!res.ok) throw new Error('Failed to update project')
+      closeModal()
+      await fetchData()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to update project')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleDeleteProject = async () => {
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete project')
+      router.push('/projects')
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete project')
+      setSaving(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -64,6 +178,9 @@ export default function ProjectDetailPage() {
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md">
           <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
           <p className="text-gray-600">{error || 'Project not found'}</p>
+          <Link href="/projects" className="mt-4 inline-block text-blue-600 hover:underline">
+            ← Back to Projects
+          </Link>
         </div>
       </div>
     )
@@ -78,8 +195,11 @@ export default function ProjectDetailPage() {
       {/* Project Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Link href="/projects" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
+            <ArrowLeft size={14} /> Back to Projects
+          </Link>
           <div className="flex justify-between items-start mb-6">
-            <div>
+            <div className="flex-1 min-w-0">
               <h1 className="text-4xl font-bold text-gray-900 mb-2">
                 {project.title}
               </h1>
@@ -87,21 +207,35 @@ export default function ProjectDetailPage() {
                 <p className="text-gray-600 max-w-3xl">{project.description}</p>
               )}
             </div>
-            <span className={`px-4 py-2 rounded-full font-semibold text-sm ${
-              project.status === 'ACTIVE'
-                ? 'bg-green-100 text-green-800'
-                : project.status === 'ON_HOLD'
-                ? 'bg-yellow-100 text-yellow-800'
-                : project.status === 'COMPLETED'
-                ? 'bg-blue-100 text-blue-800'
-                : 'bg-gray-100 text-gray-800'
-            }`}>
-              {project.status}
-            </span>
+            <div className="flex items-center gap-3 ml-4">
+              <span className={`px-4 py-2 rounded-full font-semibold text-sm ${
+                project.status === 'ACTIVE'
+                  ? 'bg-green-100 text-green-800'
+                  : project.status === 'ON_HOLD'
+                  ? 'bg-yellow-100 text-yellow-800'
+                  : project.status === 'COMPLETED'
+                  ? 'bg-blue-100 text-blue-800'
+                  : 'bg-gray-100 text-gray-800'
+              }`}>
+                {project.status}
+              </span>
+              <button
+                onClick={() => setModal('editProject')}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              >
+                <Pencil size={14} /> Edit
+              </button>
+              <button
+                onClick={() => setModal('deleteConfirm')}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 transition"
+              >
+                <Trash2 size={14} /> Delete
+              </button>
+            </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
               <div className="flex items-center space-x-3">
                 <CheckCircle className="text-blue-600" size={24} />
@@ -156,18 +290,135 @@ export default function ProjectDetailPage() {
 
         {/* Tasks Section */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Tasks</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Tasks</h2>
+            <button
+              onClick={() => setModal('addTask')}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+            >
+              <Plus size={16} /> Add Task
+            </button>
+          </div>
           {tasks.length === 0 ? (
-            <p className="text-gray-600 text-center py-8">No tasks yet. Start by creating one!</p>
+            <div className="text-center py-12">
+              <p className="text-gray-500 mb-4">No tasks yet</p>
+              <button
+                onClick={() => setModal('addTask')}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+              >
+                <Plus size={16} /> Create first task
+              </button>
+            </div>
           ) : (
             <div className="grid gap-4">
               {tasks.map(task => (
-                <TaskCard key={task.id} task={task} />
+                <div key={task.id} className="cursor-pointer" onClick={() => { setSelectedTask(task); setModal('taskDetail') }}>
+                  <TaskCard
+                    task={task}
+                    onEdit={(t) => { setSelectedTask(t); setModal('editTask') }}
+                    onDelete={handleDeleteTask}
+                  />
+                </div>
               ))}
             </div>
           )}
         </div>
       </div>
+
+      {/* === MODALS === */}
+
+      {/* Add Task */}
+      {modal === 'addTask' && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mb-12 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Add Task</h2>
+              <button onClick={closeModal} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            <TaskForm
+              onSubmit={handleCreateTask}
+              onCancel={closeModal}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Edit Task */}
+      {modal === 'editTask' && selectedTask && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mb-12 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Edit Task</h2>
+              <button onClick={closeModal} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            <TaskForm
+              initialData={selectedTask}
+              onSubmit={handleUpdateTask}
+              onCancel={closeModal}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Task Detail */}
+      {modal === 'taskDetail' && selectedTask && (
+        <TaskDetailModal
+          task={selectedTask}
+          onClose={closeModal}
+          onEdit={(t) => { setSelectedTask(t); setModal('editTask') }}
+          onStatusChange={handleStatusChange}
+        />
+      )}
+
+      {/* Edit Project */}
+      {modal === 'editProject' && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mb-12 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Edit Project</h2>
+              <button onClick={closeModal} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            <ProjectForm
+              initialData={project}
+              onSubmit={handleUpdateProject}
+              onCancel={closeModal}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation */}
+      {modal === 'deleteConfirm' && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Delete Project?</h2>
+            <p className="text-gray-600 mb-6">
+              This will permanently delete &ldquo;{project.title}&rdquo; and all its tasks. This cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteProject}
+                disabled={saving}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+              >
+                {saving ? 'Deleting...' : 'Delete Project'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
