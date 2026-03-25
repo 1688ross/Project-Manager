@@ -13,9 +13,9 @@
  */
 
 const CONFIG = {
-  VERCEL_ENDPOINT: 'https://your-vercel-app.vercel.app/api/analyze-email',
+  VERCEL_ENDPOINT: 'https://theprojectmanager-five.vercel.app',
   GMAIL_LABEL: 'ProjectManager', // Gmail label to scan
-  API_KEY: 'your-secret-key', // Add as environment variable in Vercel
+  API_KEY: '8d3dc395252b8cb8fe9b5ea4e443a6b80f14349ce1c26e2f1d1d9e9a8d6a2d28', // Add as environment variable in Vercel
   BATCH_SIZE: 10, // Process 10 emails per run
   DAYS_BACK: 7, // Look back 7 days for unprocessed emails
 }
