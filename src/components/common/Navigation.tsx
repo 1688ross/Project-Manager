@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Home, LayoutDashboard } from 'lucide-react'
+import { ArrowLeft, Home, LayoutDashboard, CalendarDays } from 'lucide-react'
 
 export default function Navigation() {
   const router = useRouter()
@@ -35,6 +35,14 @@ export default function Navigation() {
             >
               <LayoutDashboard size={20} />
               <span className="hidden sm:inline">Dashboard</span>
+            </Link>
+            <Link
+              href="/calendar"
+              className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition"
+              title="Calendar"
+            >
+              <CalendarDays size={20} />
+              <span className="hidden sm:inline">Calendar</span>
             </Link>
           </div>
           <div className="text-lg font-bold text-gray-900">

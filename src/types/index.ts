@@ -118,3 +118,22 @@ export interface GanttChartItem {
   priority: Priority
   assignee?: User
 }
+
+export interface Meeting {
+  id: string
+  title: string
+  description?: string
+  startTime: Date
+  endTime: Date
+  location?: string
+  meetingLink?: string
+  projectId?: string
+  project?: Project
+  createdBy?: string
+  attendees?: string
+  source: 'MANUAL' | 'GOOGLE_CALENDAR' | 'OUTLOOK'
+  externalId?: string
+  color?: string
+  createdAt: Date
+  updatedAt: Date
+}

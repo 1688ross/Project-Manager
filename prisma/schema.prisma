@@ -86,6 +86,7 @@ model Project {
   assets        Asset[]
   timeline      Timeline?
   brandGuide    BrandGuide?
+  meetings      Meeting[]
   
   @@index([ownerId])
   @@index([teamId])
@@ -251,6 +252,29 @@ model Notification {
   
   user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   task Task? @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model Meeting {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  startTime     DateTime
+  endTime       DateTime
+  location      String?
+  meetingLink   String?
+  projectId     String?
+  createdBy     String?
+  attendees     String?  // JSON array of attendee names/emails
+  source        String   @default("MANUAL") // MANUAL, GOOGLE_CALENDAR, OUTLOOK
+  externalId    String?  @unique // Google Calendar event ID etc.
+  color         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  project       Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([startTime])
+  @@index([projectId])
 }
 
 // String Enum Values (for SQLite compatibility)
