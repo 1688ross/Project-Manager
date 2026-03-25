@@ -58,7 +58,8 @@ function scanEmails() {
     }
 
     // Search all emails from last N hours, excluding already-processed
-    var query = 'newer_than:' + CONFIG.HOURS_BACK + 'h -label:WorkScannerProcessed -in:spam -in:trash'
+    // Skip Promotions, Social, Updates tabs — only scan Primary & Forums
+    var query = 'newer_than:' + CONFIG.HOURS_BACK + 'h -label:WorkScannerProcessed -in:spam -in:trash -category:promotions -category:social -category:updates'
     var threads = GmailApp.search(query, 0, CONFIG.BATCH_SIZE)
 
     if (threads.length === 0) {
@@ -304,7 +305,8 @@ function backfillEmails(props, startTime, stats) {
   var offset = parseInt(props.getProperty('backfillOffset') || '0', 10)
   
   // Search last 30 days, skip already processed
-  var query = 'newer_than:30d -label:WorkScannerProcessed -in:spam -in:trash'
+  // Skip Promotions, Social, Updates tabs — only scan Primary & Forums
+  var query = 'newer_than:30d -label:WorkScannerProcessed -in:spam -in:trash -category:promotions -category:social -category:updates'
   
   while (true) {
     // Check time — stop if we're close to the 6-min limit
