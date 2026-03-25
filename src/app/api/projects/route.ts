@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+export const maxDuration = 60
+
 export async function GET(_request: NextRequest) {
   try {
     const projects = await prisma.project.findMany({
