@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -9,6 +8,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const { prisma } = await import('@/lib/prisma')
     const { id } = params
 
     const project = await prisma.project.findUnique({
@@ -56,6 +56,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    const { prisma } = await import('@/lib/prisma')
     const { id } = params
     const body = await request.json()
     const { title, description, status, startDate, endDate, teamId } = body
@@ -93,6 +94,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const { prisma } = await import('@/lib/prisma')
     const { id } = params
 
     await prisma.project.delete({

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
   try {
+    const { prisma } = await import('@/lib/prisma')
     const formData = await request.formData()
     const file = formData.get('file') as File
     const projectId = formData.get('projectId') as string
