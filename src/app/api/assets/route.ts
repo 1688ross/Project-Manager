@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const { prisma } = await import('@/lib/prisma')
     const { searchParams } = new URL(request.url)
     const projectId = searchParams.get('projectId')
 
