@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { Anthropic } from '@anthropic-ai/sdk'
 
 export const dynamic = 'force-dynamic'
@@ -29,6 +28,9 @@ interface EmailAnalysisRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Lazy import to avoid loading during build
+    const { prisma } = await import('@/lib/prisma')
+
     // Verify API key
     const authHeader = request.headers.get('authorization')
     const expectedKey = `Bearer ${process.env.EMAIL_SCANNER_KEY}`
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
     const analysis = await analyzeEmailWithClaude(email)
 
     // Create MilestoneHistory entries based on analysis
-    await createMilestoneHistoryFromAnalysis(analysis, email)
+    await createMilestoneHistoryFromAnalysis(analysis, email, prisma)
 
     return NextResponse.json({
       success: true,
@@ -165,7 +167,8 @@ Guidelines:
 
 async function createMilestoneHistoryFromAnalysis(
   analysis: AnalysisResult,
-  email: EmailAnalysisRequest['email']
+  email: EmailAnalysisRequest['email'],
+  prisma: any
 ): Promise<void> {
   // Get all tasks from the latest projects to find related ones
   const recentTasks = await prisma.task.findMany({
