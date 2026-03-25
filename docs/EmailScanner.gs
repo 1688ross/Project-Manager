@@ -211,9 +211,9 @@ function getPlainBody(message) {
   // GmailMessage has getPlainBody() — much simpler than parsing MIME
   var body = message.getPlainBody() || ''
   if (!body) {
-    body = message.getBody().replace(/<[^>]*>/g, '').substring(0, 5000)
+    body = message.getBody().replace(/<[^>]*>/g, '').substring(0, 2000)
   }
-  return body.substring(0, 5000)
+  return body.substring(0, 2000)
 }
 
 function sendToAPI(data) {
@@ -260,7 +260,7 @@ function sendToAPI(data) {
    monitor progress.
    ══════════════════════════════════════ */
 
-var BACKFILL_BATCH = 25
+var BACKFILL_BATCH = 10
 var BACKFILL_MAX_MINUTES = 5 // stop before the 6-min hard limit
 
 function backfill30Days() {
@@ -363,8 +363,8 @@ function backfillEmails(props, startTime, stats) {
         stats.emailsSent++
       }
       
-      // Small pause to avoid hammering the API
-      Utilities.sleep(500)
+      // Pause to stay within Apps Script bandwidth quota
+      Utilities.sleep(2000)
     }
     
     offset += threads.length
