@@ -14,21 +14,33 @@ try {
   // Ignore initialization errors during build
 }
 
-interface EmailAnalysisRequest {
-  email: {
-    messageId: string
-    threadId: string
-    from: string
-    subject: string
-    body: string
-    timestamp: string
-    isReply: boolean
+interface WorkScannerRequest {
+  data: {
+    source: 'email' | 'calendar'
+    // Email fields
+    messageId?: string
+    threadId?: string
+    from?: string
+    to?: string
+    cc?: string
+    subject?: string
+    body?: string
+    timestamp?: string
+    isReply?: boolean
+    // Calendar fields
+    eventId?: string
+    title?: string
+    description?: string
+    startTime?: string
+    endTime?: string
+    location?: string
+    attendees?: string
+    isAllDay?: boolean
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Lazy import to avoid loading during build
     const { prisma } = await import('@/lib/prisma')
 
     // Verify API key
@@ -42,190 +54,264 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const body: EmailAnalysisRequest = await request.json()
-    const { email } = body
+    const body: WorkScannerRequest = await request.json()
+    const { data } = body
 
-    // Analyze email with Claude
-    const analysis = await analyzeEmailWithClaude(email)
+    // Handle legacy format (old EmailScanner sends { email: {...} })
+    const legacyBody = body as any
+    if (legacyBody.email && !data) {
+      return handleLegacyEmail(legacyBody.email, prisma)
+    }
 
-    // Create MilestoneHistory entries based on analysis
-    await createMilestoneHistoryFromAnalysis(analysis, email, prisma)
+    if (data.source === 'calendar') {
+      return handleCalendarEvent(data, prisma)
+    }
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        messageId: email.messageId,
-        analysis,
-      },
-    })
+    // Default: email
+    return handleEmail(data, prisma)
+
   } catch (error) {
-    console.error('Error analyzing email:', error)
+    console.error('Error in WorkScanner API:', error)
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to analyze email',
+        error: error instanceof Error ? error.message : 'Failed to process data',
       },
       { status: 500 }
     )
   }
 }
 
-interface AnalysisResult {
-  eventType: 'FEEDBACK' | 'APPROVED' | 'SUBMITTED' | 'QUESTION' | 'NEW_PROJECT' | 'INFO'
-  projectTaskIds: string[] // IDs of referenced projects/tasks (if any)
-  confidence: number // 0-1 confidence score
-  changes_requested: string[]
-  sentiment: string // 'positive', 'neutral', 'negative'
-  summary: string // One-line summary
-  details: string // Full notes to store
-  senderRole: string // 'client', 'colleague', 'unknown'
+/* ── Email Handler ── */
+
+async function handleEmail(data: WorkScannerRequest['data'], prisma: any) {
+  const analysis = await analyzeWithClaude('email', data)
+
+  // If Claude says this email is not relevant, skip it
+  if (analysis.relevance === 'IGNORE') {
+    return NextResponse.json({
+      success: true,
+      data: { action: 'ignored', reason: analysis.summary },
+    })
+  }
+
+  // Create milestone history if matched to task
+  await createMilestoneFromAnalysis(analysis, data, prisma)
+
+  // If it's a calendar-worthy email (meeting invite, scheduling), create a meeting
+  if (analysis.createMeeting) {
+    await createMeetingFromAnalysis(analysis, prisma)
+  }
+
+  return NextResponse.json({
+    success: true,
+    data: { action: 'processed', analysis },
+  })
 }
 
-async function analyzeEmailWithClaude(email: EmailAnalysisRequest['email']): Promise<AnalysisResult> {
+/* ── Calendar Handler ── */
+
+async function handleCalendarEvent(data: WorkScannerRequest['data'], prisma: any) {
+  // Create meeting in database if it doesn't exist
+  const existing = data.eventId
+    ? await prisma.meeting.findUnique({ where: { externalId: data.eventId } })
+    : null
+
+  if (existing) {
+    return NextResponse.json({
+      success: true,
+      data: { action: 'already_exists', meetingId: existing.id },
+    })
+  }
+
+  const meeting = await prisma.meeting.create({
+    data: {
+      title: data.title || 'Untitled Event',
+      description: data.description || null,
+      startTime: new Date(data.startTime!),
+      endTime: new Date(data.endTime!),
+      location: data.location || null,
+      attendees: data.attendees || null,
+      source: 'GOOGLE_CALENDAR',
+      externalId: data.eventId || null,
+    },
+  })
+
+  // Optionally analyze the meeting for task relevance
+  if (data.description && data.description.length > 20) {
+    const analysis = await analyzeWithClaude('calendar', data)
+    if (analysis.relevance !== 'IGNORE') {
+      await createMilestoneFromAnalysis(analysis, data, prisma)
+    }
+  }
+
+  return NextResponse.json({
+    success: true,
+    data: { action: 'created', meetingId: meeting.id },
+  }, { status: 201 })
+}
+
+/* ── Legacy email handler (backwards compatible) ── */
+
+async function handleLegacyEmail(email: any, prisma: any) {
+  const data = { ...email, source: 'email' as const }
+  return handleEmail(data, prisma)
+}
+
+/* ── Claude Analysis ── */
+
+interface AnalysisResult {
+  relevance: 'ACTIONABLE' | 'INFORMATIONAL' | 'IGNORE'
+  eventType: 'FEEDBACK' | 'APPROVED' | 'SUBMITTED' | 'QUESTION' | 'NEW_PROJECT' | 'INFO'
+  confidence: number
+  changes_requested: string[]
+  sentiment: string
+  summary: string
+  details: string
+  senderRole: string
+  createMeeting?: {
+    title: string
+    startTime: string
+    endTime: string
+    location?: string
+  }
+}
+
+async function analyzeWithClaude(
+  source: 'email' | 'calendar',
+  data: WorkScannerRequest['data']
+): Promise<AnalysisResult> {
   if (!client) {
     return {
+      relevance: 'INFORMATIONAL',
       eventType: 'INFO',
-      projectTaskIds: [],
       confidence: 0.5,
       changes_requested: [],
       sentiment: 'neutral',
-      summary: 'Email analysis not available',
-      details: 'Anthropic API client not initialized',
+      summary: 'Analysis not available — no API key',
+      details: '',
       senderRole: 'unknown',
     }
   }
 
-  const prompt = `Analyze this email from our project management system. Determine:
-1. Event type (FEEDBACK, APPROVED, SUBMITTED, QUESTION, NEW_PROJECT, or INFO)
-2. Any changes/action items requested
-3. Sentiment (positive, neutral, negative)
-4. Role of sender (client or colleague)
-5. Confidence score (0-1)
-6. Summary and detailed notes
-
-Email Details:
-From: ${email.from}
-Subject: ${email.subject}
-Is Reply: ${email.isReply}
-Timestamp: ${email.timestamp}
+  const contextBlock =
+    source === 'email'
+      ? `Email:
+From: ${data.from}
+To: ${data.to}
+Subject: ${data.subject}
+Is Reply: ${data.isReply}
+Date: ${data.timestamp}
 
 Body:
-${email.body}
+${data.body}`
+      : `Calendar Event:
+Title: ${data.title}
+Start: ${data.startTime}
+End: ${data.endTime}
+Location: ${data.location || 'none'}
+Attendees: ${data.attendees || 'none'}
+
+Description:
+${data.description}`
+
+  const prompt = `You are a project management assistant. Analyze this ${source} and determine if it is relevant to work/projects.
+
+${contextBlock}
 
 Respond ONLY with valid JSON (no markdown, no code blocks):
 {
+  "relevance": "ACTIONABLE|INFORMATIONAL|IGNORE",
   "eventType": "FEEDBACK|APPROVED|SUBMITTED|QUESTION|NEW_PROJECT|INFO",
-  "projectTaskIds": [],
   "confidence": 0.0-1.0,
-  "changes_requested": ["change1", "change2"],
+  "changes_requested": ["item1", "item2"],
   "sentiment": "positive|neutral|negative",
   "summary": "One line summary",
-  "details": "Full notes including any feedback, questions, or action items",
+  "details": "Detailed notes and action items",
   "senderRole": "client|colleague|unknown"
 }
 
-Guidelines:
-- If email has approval/sign-off → APPROVED
-- If email has revision requests → FEEDBACK
-- If email asks a question about the project → QUESTION
-- If email proposes new work/project → NEW_PROJECT
-- If email is just sharing info → INFO
-- If sender is external domain (not @your-company.com) → client
-- If internal sender → colleague
-- Extract specific changes requested in changes_requested array`
-
-  const response = await client.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 500,
-    messages: [
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ],
-  })
-
-  const responseText =
-    response.content[0].type === 'text' ? response.content[0].text : '{}'
+Rules:
+- IGNORE: newsletters, marketing, social media notifications, automated alerts, spam, personal/non-work emails
+- INFORMATIONAL: FYI updates, status reports, no action needed
+- ACTIONABLE: needs a response, has a deadline, requests changes, asks questions
+- For approval/sign-off emails: eventType = APPROVED
+- For revision/change requests: eventType = FEEDBACK
+- For new work proposals: eventType = NEW_PROJECT
+- For questions: eventType = QUESTION
+- For status updates: eventType = INFO
+- External senders → client, internal → colleague`
 
   try {
-    return JSON.parse(responseText)
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 500,
+      messages: [{ role: 'user', content: prompt }],
+    })
+
+    const text = response.content[0].type === 'text' ? response.content[0].text : '{}'
+    return JSON.parse(text)
   } catch (e) {
-    console.error('Failed to parse Claude response:', responseText)
+    console.error('Claude analysis failed:', e)
     return {
+      relevance: 'INFORMATIONAL',
       eventType: 'INFO',
-      projectTaskIds: [],
-      confidence: 0.5,
+      confidence: 0.3,
       changes_requested: [],
       sentiment: 'neutral',
-      summary: 'Email analysis failed',
-      details: 'Could not parse email analysis. Raw: ' + responseText.substring(0, 200),
+      summary: 'Analysis failed',
+      details: String(e),
       senderRole: 'unknown',
     }
   }
 }
 
-async function createMilestoneHistoryFromAnalysis(
+/* ── Database helpers ── */
+
+async function createMilestoneFromAnalysis(
   analysis: AnalysisResult,
-  email: EmailAnalysisRequest['email'],
+  data: WorkScannerRequest['data'],
   prisma: any
-): Promise<void> {
-  // Get all tasks from the latest projects to find related ones
+) {
   const recentTasks = await prisma.task.findMany({
-    where: {
-      project: {
-        status: { in: ['ACTIVE', 'IN_PRODUCTION'] },
-      },
-    },
-    select: { id: true, title: true, projectId: true },
+    where: { project: { status: { in: ['ACTIVE', 'IN_PRODUCTION'] } } },
+    select: { id: true, title: true },
     take: 50,
   })
 
-  // If we have specific task IDs from analysis, use those
-  // Otherwise, create a generic "email log" entry
-  let targetTaskIds = analysis.projectTaskIds
+  const searchText = (
+    (data.subject || '') + ' ' + (data.body || '') + ' ' + (data.title || '') + ' ' + (data.description || '')
+  ).toLowerCase()
 
-  if (targetTaskIds.length === 0 && analysis.eventType !== 'NEW_PROJECT') {
-    // Try to find related tasks by matching email subject/body with task titles
-    const emailText = `${email.subject} ${email.body}`.toLowerCase()
-    targetTaskIds = recentTasks
-      .filter((task: any) => {
-        const taskTitle = task.title.toLowerCase()
-        return (
-          taskTitle.length > 3 &&
-          emailText.includes(taskTitle)
-        )
-      })
-      .map((t: any) => t.id)
-      .slice(0, 3) // Limit to top 3 matches
-  }
+  const matchedTaskIds = recentTasks
+    .filter((t: any) => t.title.length > 3 && searchText.includes(t.title.toLowerCase()))
+    .map((t: any) => t.id)
+    .slice(0, 3)
 
-  // Create milestone history entry for each related task
-  if (targetTaskIds.length > 0) {
-    for (const taskId of targetTaskIds) {
-      await prisma.milestoneHistory.create({
-        data: {
-          taskId,
-          eventType: analysis.eventType as any,
-          dateOccurred: new Date(email.timestamp),
-          notes: `[${analysis.senderRole}] ${analysis.summary}\n\nDetails: ${analysis.details}\n\nFrom: ${email.from}\nSubject: ${email.subject}`,
-        },
-      })
-    }
-  } else if (analysis.eventType === 'NEW_PROJECT') {
-    // For new projects, we might want to create a note somewhere else
-    // For now, log to console
-    console.log('New project identified:', {
-      from: email.from,
-      subject: email.subject,
-      summary: analysis.summary,
-    })
-  } else {
-    // Create a generic "pending review" log for unmatched emails
-    console.log('Email logged but not matched to task:', {
-      subject: email.subject,
-      from: email.from,
-      analysis,
+  const sourceLabel = data.source === 'calendar' ? 'calendar' : data.from || 'unknown'
+
+  for (const taskId of matchedTaskIds) {
+    await prisma.milestoneHistory.create({
+      data: {
+        taskId,
+        eventType: analysis.eventType,
+        dateOccurred: new Date(data.timestamp || data.startTime || new Date().toISOString()),
+        notes: `[${sourceLabel}] ${analysis.summary}\n\n${analysis.details}`,
+      },
     })
   }
+}
+
+async function createMeetingFromAnalysis(analysis: AnalysisResult, prisma: any) {
+  if (!analysis.createMeeting) return
+
+  await prisma.meeting.create({
+    data: {
+      title: analysis.createMeeting.title,
+      startTime: new Date(analysis.createMeeting.startTime),
+      endTime: new Date(analysis.createMeeting.endTime),
+      location: analysis.createMeeting.location || null,
+      source: 'MANUAL',
+    },
+  })
 }
