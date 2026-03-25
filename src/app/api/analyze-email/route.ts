@@ -4,9 +4,16 @@ import { Anthropic } from '@anthropic-ai/sdk'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
-export const revalidate = 0
 
-const client = new Anthropic()
+let client: Anthropic | null = null
+
+try {
+  if (process.env.ANTHROPIC_API_KEY) {
+    client = new Anthropic()
+  }
+} catch (e) {
+  // Ignore initialization errors during build
+}
 
 interface EmailAnalysisRequest {
   email: {
@@ -73,6 +80,19 @@ interface AnalysisResult {
 }
 
 async function analyzeEmailWithClaude(email: EmailAnalysisRequest['email']): Promise<AnalysisResult> {
+  if (!client) {
+    return {
+      eventType: 'INFO',
+      projectTaskIds: [],
+      confidence: 0.5,
+      changes_requested: [],
+      sentiment: 'neutral',
+      summary: 'Email analysis not available',
+      details: 'Anthropic API client not initialized',
+      senderRole: 'unknown',
+    }
+  }
+
   const prompt = `Analyze this email from our project management system. Determine:
 1. Event type (FEEDBACK, APPROVED, SUBMITTED, QUESTION, NEW_PROJECT, or INFO)
 2. Any changes/action items requested
