@@ -25,7 +25,7 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
 
   if (!tasks || tasks.length === 0) {
     return (
-      <div className="h-96 bg-gray-50 rounded-lg flex items-center justify-center text-gray-500">
+      <div className="h-96 bg-white/5 rounded-lg flex items-center justify-center text-gray-500">
         <p>No tasks to display</p>
       </div>
     )
@@ -110,19 +110,19 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
   const showTodayLine = todayPercent >= 0 && todayPercent <= 100
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div className="bg-white/5 rounded-lg border border-white/10 overflow-hidden">
       <div className="overflow-x-auto">
         {/* Header with date labels */}
-        <div className="sticky top-0 z-20 bg-gray-50 border-b border-gray-200">
+        <div className="sticky top-0 z-20 bg-slate-900/80 backdrop-blur border-b border-white/10">
           <div className="flex">
-            <div className="w-64 flex-shrink-0 border-r border-gray-200 p-4 font-semibold text-sm text-gray-700">
+            <div className="w-64 flex-shrink-0 border-r border-white/10 p-4 font-semibold text-sm text-gray-300">
               Milestones
             </div>
             <div className="flex-1 flex relative">
               {dateLabels.map((date, i) => (
                 <div
                   key={i}
-                  className="flex-1 flex-shrink-0 border-r border-gray-200 p-2 text-xs font-medium text-gray-600 text-center"
+                  className="flex-1 flex-shrink-0 border-r border-white/10 p-2 text-xs font-medium text-gray-400 text-center"
                   style={{ minWidth: `${weekWidth}%` }}
                 >
                   {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -153,11 +153,11 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
             return (
               <div
                 key={task.id}
-                className="flex border-b border-gray-200 hover:bg-gray-50 transition"
+                className="flex border-b border-white/5 hover:bg-white/5 transition"
               >
                 {/* Task name */}
-                <div className="w-64 flex-shrink-0 border-r border-gray-200 p-4">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{task.title}</p>
+                <div className="w-64 flex-shrink-0 border-r border-white/10 p-4">
+                  <p className="text-sm font-semibold text-gray-200 truncate">{task.title}</p>
                   <p className={`text-xs mt-1 ${statusColor.text}`}>{getStatusLabel(task.status)}</p>
                   {task.dueDate && (
                     <p className="text-xs text-gray-500 mt-1">
@@ -167,7 +167,7 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
                 </div>
 
                 {/* Gantt bar area */}
-                <div className="flex-1 relative h-20 bg-white">
+                <div className="flex-1 relative h-20">
                   {/* Today vertical line */}
                   {showTodayLine && (
                     <div
@@ -195,7 +195,7 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
                               e.stopPropagation()
                               setSelectedMarker({ history: marker.history, task })
                             }}
-                            className="absolute flex items-center justify-center w-6 h-6 bg-white rounded-full shadow-md hover:shadow-lg transition hover:scale-110 border-2 border-gray-200"
+                            className="absolute flex items-center justify-center w-6 h-6 bg-slate-800 rounded-full shadow-md hover:shadow-lg transition hover:scale-110 border-2 border-white/20"
                             style={{
                               left: `${marker.position}%`,
                               transform: 'translate(-50%, -50%)',
@@ -217,19 +217,19 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
       </div>
 
       {/* Legend */}
-      <div className="bg-gray-50 border-t border-gray-200 p-4">
+      <div className="bg-white/5 border-t border-white/10 p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
           <div className="flex items-center space-x-2">
-            <ArrowRight size={16} className="text-blue-600" />
-            <span className="text-gray-600">→ Submitted to Client</span>
+            <ArrowRight size={16} className="text-blue-400" />
+            <span className="text-gray-400">→ Submitted to Client</span>
           </div>
           <div className="flex items-center space-x-2">
-            <ArrowLeft size={16} className="text-orange-600" />
-            <span className="text-gray-600">← Client Feedback</span>
+            <ArrowLeft size={16} className="text-orange-400" />
+            <span className="text-gray-400">← Client Feedback</span>
           </div>
           <div className="flex items-center space-x-2">
-            <CheckCircle2 size={16} className="text-green-600" />
-            <span className="text-gray-600">● Approved</span>
+            <CheckCircle2 size={16} className="text-green-400" />
+            <span className="text-gray-400">● Approved</span>
           </div>
         </div>
       </div>
@@ -237,29 +237,29 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
       {/* Milestone Details Modal */}
       {selectedMarker && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
           onClick={() => setSelectedMarker(null)}
         >
           <div
-            className="bg-white rounded-lg shadow-2xl p-6 max-w-md w-full mx-4"
+            className="glass-modal rounded-2xl p-6 max-w-md w-full mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center space-x-3 mb-4">
               {getEventIcon(selectedMarker.history.eventType)}
-              <h3 className="text-lg font-bold text-gray-900">
+              <h3 className="text-lg font-bold text-white">
                 {getEventLabel(selectedMarker.history.eventType)}
               </h3>
             </div>
 
-            <div className="space-y-3 bg-gray-50 rounded-lg p-4 mb-4">
+            <div className="space-y-3 bg-white/5 rounded-lg p-4 mb-4">
               <div>
-                <p className="text-xs text-gray-600">Milestone</p>
-                <p className="text-sm font-semibold text-gray-900">{selectedMarker.task.title}</p>
+                <p className="text-xs text-gray-500">Milestone</p>
+                <p className="text-sm font-semibold text-gray-200">{selectedMarker.task.title}</p>
               </div>
 
               <div>
-                <p className="text-xs text-gray-600">Date</p>
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-xs text-gray-500">Date</p>
+                <p className="text-sm font-semibold text-gray-200">
                   {new Date(selectedMarker.history.dateOccurred).toLocaleDateString('en-US', {
                     weekday: 'long',
                     year: 'numeric',
@@ -271,15 +271,15 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
 
               {selectedMarker.history.notes && (
                 <div>
-                  <p className="text-xs text-gray-600">Notes / Feedback</p>
-                  <p className="text-sm text-gray-900 mt-1">{selectedMarker.history.notes}</p>
+                  <p className="text-xs text-gray-500">Notes / Feedback</p>
+                  <p className="text-sm text-gray-300 mt-1">{selectedMarker.history.notes}</p>
                 </div>
               )}
             </div>
 
             <button
               onClick={() => setSelectedMarker(null)}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+              className="btn-glass w-full text-white"
             >
               Close
             </button>

@@ -15,7 +15,8 @@ export function TaskCard({ task, onEdit, onDelete, onComment }: TaskCardProps) {
   const statusColor = taskStatusColors[task.status as TaskStatus] || taskStatusColors.TODO
   const priorityColor = priorityColors[task.priority as Priority] || priorityColors.MEDIUM
   const daysUntil = getDaysUntil(task.dueDate)
-  const overdue = isOverdue(task.dueDate)
+  const completedStatuses: TaskStatus[] = ['COMPLETED', 'APPROVED', 'LAUNCHED']
+  const overdue = !completedStatuses.includes(task.status as TaskStatus) && isOverdue(task.dueDate)
 
   return (
     <div className={`glass-card ${statusColor.border} p-4 hover:bg-white/10 transition`}>
@@ -61,7 +62,11 @@ export function TaskCard({ task, onEdit, onDelete, onComment }: TaskCardProps) {
           <div className="flex items-center space-x-2">
             <Clock size={14} className={overdue ? 'text-red-400' : 'text-gray-500'} />
             <span className={overdue ? 'text-red-400 font-semibold' : 'text-gray-400'}>
-              {overdue ? '⚠️ Overdue' : `Due in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}`}
+              {completedStatuses.includes(task.status as TaskStatus)
+                ? `Completed`
+                : overdue
+                ? '⚠️ Overdue'
+                : `Due in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}`}
             </span>
           </div>
         )}
