@@ -39,12 +39,12 @@ export default function ProjectsPage() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      ACTIVE: 'bg-blue-100 text-blue-800',
-      ARCHIVED: 'bg-gray-100 text-gray-800',
-      COMPLETED: 'bg-green-100 text-green-800',
-      ON_HOLD: 'bg-yellow-100 text-yellow-800',
+      ACTIVE: 'bg-blue-500/20 text-blue-300',
+      ARCHIVED: 'bg-gray-500/20 text-gray-400',
+      COMPLETED: 'bg-emerald-500/20 text-emerald-300',
+      ON_HOLD: 'bg-yellow-500/20 text-yellow-300',
     }
-    return colors[status] || 'bg-blue-100 text-blue-800'
+    return colors[status] || 'bg-blue-500/20 text-blue-300'
   }
 
   const filtered = projects.filter(p => {
@@ -58,18 +58,18 @@ export default function ProjectsPage() {
   const hasActiveFilters = statusFilter !== 'ALL'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="glass-nav">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-              <p className="text-gray-600 mt-2">Manage all your creative projects</p>
+              <h1 className="text-3xl font-bold text-white">Projects</h1>
+              <p className="text-gray-400 mt-2">Manage all your creative projects</p>
             </div>
             <Link
               href="/projects/new"
-              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+              className="btn-glass flex items-center space-x-2 text-white"
             >
               <Plus size={20} />
               <span>New Project</span>
@@ -87,12 +87,12 @@ export default function ProjectsPage() {
               placeholder="Search projects..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 glass-input rounded-xl"
             />
             {search && (
               <button
                 onClick={() => setSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
               >
                 <X size={16} />
               </button>
@@ -100,8 +100,8 @@ export default function ProjectsPage() {
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center space-x-2 px-4 py-2 border rounded-lg hover:bg-gray-50 ${
-              hasActiveFilters ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white'
+            className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition ${
+              hasActiveFilters ? 'bg-indigo-500/20 border border-indigo-500/30 text-indigo-300' : 'btn-glass-secondary'
             }`}
           >
             <Filter size={18} />
@@ -117,8 +117,8 @@ export default function ProjectsPage() {
                 onClick={() => setStatusFilter(opt.value)}
                 className={`px-3 py-1.5 text-sm rounded-full font-medium transition ${
                   statusFilter === opt.value
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    ? 'bg-indigo-500 text-white'
+                    : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:text-gray-200'
                 }`}
               >
                 {opt.label}
@@ -139,17 +139,17 @@ export default function ProjectsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         {loading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading projects...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading projects...</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-12">
             {projects.length === 0 ? (
               <>
-                <p className="text-gray-600 mb-4">No projects yet</p>
+                <p className="text-gray-400 mb-4">No projects yet</p>
                 <Link
                   href="/projects/new"
-                  className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                  className="btn-glass inline-flex items-center space-x-2 text-white"
                 >
                   <Plus size={20} />
                   <span>Create your first project</span>
@@ -157,10 +157,10 @@ export default function ProjectsPage() {
               </>
             ) : (
               <>
-                <p className="text-gray-600 mb-2">No projects match your filter</p>
+                <p className="text-gray-400 mb-2">No projects match your filter</p>
                 <button
                   onClick={() => { setSearch(''); setStatusFilter('ALL') }}
-                  className="text-blue-600 hover:underline text-sm"
+                  className="text-indigo-400 hover:text-indigo-300 text-sm"
                 >
                   Clear filters
                 </button>
@@ -173,15 +173,15 @@ export default function ProjectsPage() {
               <Link
                 key={project.id}
                 href={`/projects/${project.id}`}
-                className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-all"
+                className="glass-card p-6"
               >
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-bold text-gray-900 text-lg">{project.title}</h3>
-                  <div className={`text-xs font-semibold px-2 py-1 rounded-full ${getStatusColor(project.status)}`}>
+                  <h3 className="font-bold text-white text-lg">{project.title}</h3>
+                  <div className={`text-xs font-semibold px-2.5 py-1 rounded-full ${getStatusColor(project.status)}`}>
                     {project.status.replace(/_/g, ' ')}
                   </div>
                 </div>
-                <p className="text-gray-600 text-sm mb-4">{project.description || 'No description'}</p>
+                <p className="text-gray-400 text-sm mb-4">{project.description || 'No description'}</p>
 
                 {/* Due Date */}
                 {project.endDate && (

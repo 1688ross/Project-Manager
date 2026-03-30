@@ -1,22 +1,22 @@
 export const taskStatusColors: Record<string, { bg: string; text: string; border: string }> = {
-  TODO: { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-300' },
-  IN_PRODUCTION: { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-300' },
-  SENT_TO_CLIENT: { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-300' },
-  WAITING_FEEDBACK: { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-300' },
-  MAKING_CHANGES: { bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-300' },
-  SUBMITTING_FINAL: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-300' },
-  SUBMITTING_ROUND_TWO: { bg: 'bg-indigo-100', text: 'text-indigo-800', border: 'border-indigo-300' },
-  APPROVED: { bg: 'bg-emerald-100', text: 'text-emerald-800', border: 'border-emerald-300' },
-  NEEDS_PRINTING: { bg: 'bg-pink-100', text: 'text-pink-800', border: 'border-pink-300' },
-  LAUNCHED: { bg: 'bg-teal-100', text: 'text-teal-800', border: 'border-teal-300' },
-  COMPLETED: { bg: 'bg-slate-100', text: 'text-slate-800', border: 'border-slate-300' },
+  TODO: { bg: 'bg-gray-500/20', text: 'text-gray-300', border: 'border-gray-500/30' },
+  IN_PRODUCTION: { bg: 'bg-blue-500/20', text: 'text-blue-300', border: 'border-blue-500/30' },
+  SENT_TO_CLIENT: { bg: 'bg-purple-500/20', text: 'text-purple-300', border: 'border-purple-500/30' },
+  WAITING_FEEDBACK: { bg: 'bg-yellow-500/20', text: 'text-yellow-300', border: 'border-yellow-500/30' },
+  MAKING_CHANGES: { bg: 'bg-orange-500/20', text: 'text-orange-300', border: 'border-orange-500/30' },
+  SUBMITTING_FINAL: { bg: 'bg-green-500/20', text: 'text-green-300', border: 'border-green-500/30' },
+  SUBMITTING_ROUND_TWO: { bg: 'bg-indigo-500/20', text: 'text-indigo-300', border: 'border-indigo-500/30' },
+  APPROVED: { bg: 'bg-emerald-500/20', text: 'text-emerald-300', border: 'border-emerald-500/30' },
+  NEEDS_PRINTING: { bg: 'bg-pink-500/20', text: 'text-pink-300', border: 'border-pink-500/30' },
+  LAUNCHED: { bg: 'bg-teal-500/20', text: 'text-teal-300', border: 'border-teal-500/30' },
+  COMPLETED: { bg: 'bg-slate-500/20', text: 'text-slate-300', border: 'border-slate-500/30' },
 }
 
 export const priorityColors: Record<string, { bg: string; text: string }> = {
-  LOW: { bg: 'bg-blue-100', text: 'text-blue-800' },
-  MEDIUM: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-  HIGH: { bg: 'bg-orange-100', text: 'text-orange-800' },
-  URGENT: { bg: 'bg-red-100', text: 'text-red-800' },
+  LOW: { bg: 'bg-blue-500/20', text: 'text-blue-300' },
+  MEDIUM: { bg: 'bg-yellow-500/20', text: 'text-yellow-300' },
+  HIGH: { bg: 'bg-orange-500/20', text: 'text-orange-300' },
+  URGENT: { bg: 'bg-red-500/20', text: 'text-red-300' },
 }
 
 export const getStatusLabel = (status: string): string => {

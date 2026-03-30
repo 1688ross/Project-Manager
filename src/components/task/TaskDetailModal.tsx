@@ -12,12 +12,12 @@ interface TaskDetailModalProps {
 }
 
 const eventTypeConfig: Record<string, { icon: typeof ArrowRight; color: string; bg: string; label: string }> = {
-  SUBMITTED: { icon: ArrowRight, color: 'text-blue-600', bg: 'bg-blue-100', label: 'Submitted to Client' },
-  FEEDBACK: { icon: ArrowLeft, color: 'text-orange-600', bg: 'bg-orange-100', label: 'Client Feedback' },
-  APPROVED: { icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-100', label: 'Approved' },
-  QUESTION: { icon: HelpCircle, color: 'text-purple-600', bg: 'bg-purple-100', label: 'Question' },
-  NEW_PROJECT: { icon: AlertCircle, color: 'text-indigo-600', bg: 'bg-indigo-100', label: 'New Project' },
-  INFO: { icon: Info, color: 'text-gray-600', bg: 'bg-gray-100', label: 'Info Update' },
+  SUBMITTED: { icon: ArrowRight, color: 'text-blue-400', bg: 'bg-blue-500/20', label: 'Submitted to Client' },
+  FEEDBACK: { icon: ArrowLeft, color: 'text-orange-400', bg: 'bg-orange-500/20', label: 'Client Feedback' },
+  APPROVED: { icon: CheckCircle, color: 'text-green-400', bg: 'bg-green-500/20', label: 'Approved' },
+  QUESTION: { icon: HelpCircle, color: 'text-purple-400', bg: 'bg-purple-500/20', label: 'Question' },
+  NEW_PROJECT: { icon: AlertCircle, color: 'text-indigo-400', bg: 'bg-indigo-500/20', label: 'New Project' },
+  INFO: { icon: Info, color: 'text-gray-400', bg: 'bg-gray-500/20', label: 'Info Update' },
 }
 
 export function TaskDetailModal({ task, onClose, onEdit, onStatusChange }: TaskDetailModalProps) {
@@ -36,12 +36,12 @@ export function TaskDetailModal({ task, onClose, onEdit, onStatusChange }: TaskD
   const currentIndex = statusFlow.indexOf(task.status as TaskStatus)
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mb-12" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
+      <div className="glass-modal w-full max-w-2xl mb-12" onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-gray-100">
+        <div className="flex items-start justify-between p-6 border-b border-white/10">
           <div className="flex-1 min-w-0 pr-4">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">{task.title}</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">{task.title}</h2>
             <div className="flex flex-wrap gap-2">
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${statusColor.bg} ${statusColor.text}`}>
                 {task.status.replace(/_/g, ' ')}
@@ -50,7 +50,7 @@ export function TaskDetailModal({ task, onClose, onEdit, onStatusChange }: TaskD
                 {task.priority}
               </span>
               {overdue && (
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-100 text-red-700">
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-500/20 text-red-300">
                   Overdue
                 </span>
               )}
@@ -59,12 +59,12 @@ export function TaskDetailModal({ task, onClose, onEdit, onStatusChange }: TaskD
           <div className="flex items-center gap-2">
             <button
               onClick={() => onEdit(task)}
-              className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition"
+              className="px-3 py-1.5 text-sm font-medium text-indigo-400 bg-indigo-500/20 rounded-lg hover:bg-indigo-500/30 transition"
             >
               Edit
             </button>
-            <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
-              <X size={20} className="text-gray-500" />
+            <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition">
+              <X size={20} className="text-gray-400" />
             </button>
           </div>
         </div>
@@ -75,7 +75,7 @@ export function TaskDetailModal({ task, onClose, onEdit, onStatusChange }: TaskD
           {task.description && (
             <div>
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Description</h3>
-              <p className="text-gray-700 leading-relaxed">{task.description}</p>
+              <p className="text-gray-300 leading-relaxed">{task.description}</p>
             </div>
           )}
 
@@ -83,26 +83,26 @@ export function TaskDetailModal({ task, onClose, onEdit, onStatusChange }: TaskD
           <div className="grid grid-cols-2 gap-4">
             {task.startDate && (
               <div className="flex items-center gap-2 text-sm">
-                <Calendar size={16} className="text-gray-400" />
-                <span className="text-gray-600">Start: {formatDate(task.startDate)}</span>
+                <Calendar size={16} className="text-gray-500" />
+                <span className="text-gray-400">Start: {formatDate(task.startDate)}</span>
               </div>
             )}
             {task.dueDate && (
               <div className="flex items-center gap-2 text-sm">
-                <Clock size={16} className={overdue ? 'text-red-500' : 'text-gray-400'} />
-                <span className={overdue ? 'text-red-600 font-semibold' : 'text-gray-600'}>
+                <Clock size={16} className={overdue ? 'text-red-400' : 'text-gray-500'} />
+                <span className={overdue ? 'text-red-400 font-semibold' : 'text-gray-400'}>
                   Due: {formatDate(task.dueDate)}
                   {!overdue && daysUntil >= 0 && ` (${daysUntil}d)`}
                 </span>
               </div>
             )}
             {task.estimatedHours != null && (
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-400">
                 Estimated: {task.estimatedHours}h
               </div>
             )}
             {task.actualHours != null && (
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-400">
                 Actual: {task.actualHours}h
               </div>
             )}
@@ -118,10 +118,10 @@ export function TaskDetailModal({ task, onClose, onEdit, onStatusChange }: TaskD
                   onClick={() => onStatusChange(task.id, s)}
                   className={`text-xs px-2.5 py-1.5 rounded-full font-medium transition ${
                     s === task.status
-                      ? 'bg-blue-600 text-white ring-2 ring-blue-300'
+                      ? 'bg-indigo-500 text-white ring-2 ring-indigo-400/50'
                       : i < currentIndex
-                      ? 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                      ? 'bg-white/10 text-gray-400 hover:bg-white/15'
+                      : 'bg-white/5 text-gray-500 hover:bg-white/10'
                   }`}
                 >
                   {s.replace(/_/g, ' ')}
@@ -136,15 +136,15 @@ export function TaskDetailModal({ task, onClose, onEdit, onStatusChange }: TaskD
               Milestone History {history.length > 0 && `(${history.length})`}
             </h3>
             {history.length === 0 ? (
-              <div className="text-center py-6 bg-gray-50 rounded-lg">
-                <MessageCircle size={24} className="mx-auto text-gray-300 mb-2" />
+              <div className="text-center py-6 bg-white/5 rounded-lg">
+                <MessageCircle size={24} className="mx-auto text-gray-600 mb-2" />
                 <p className="text-sm text-gray-500">No milestone events yet</p>
-                <p className="text-xs text-gray-400 mt-1">Events from email scans and manual updates will appear here</p>
+                <p className="text-xs text-gray-600 mt-1">Events from email scans and manual updates will appear here</p>
               </div>
             ) : (
               <div className="relative">
                 {/* Timeline line */}
-                <div className="absolute left-5 top-2 bottom-2 w-px bg-gray-200" />
+                <div className="absolute left-5 top-2 bottom-2 w-px bg-white/10" />
                 <div className="space-y-4">
                   {history.map((event: MilestoneHistory) => {
                     const config = eventTypeConfig[event.eventType] || eventTypeConfig.INFO
@@ -162,7 +162,7 @@ export function TaskDetailModal({ task, onClose, onEdit, onStatusChange }: TaskD
                             </span>
                           </div>
                           {event.notes && (
-                            <p className="text-sm text-gray-600 mt-1 leading-relaxed">{event.notes}</p>
+                            <p className="text-sm text-gray-400 mt-1 leading-relaxed">{event.notes}</p>
                           )}
                         </div>
                       </div>

@@ -41,38 +41,38 @@ export function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Task Title *</label>
+        <label className="block text-sm font-medium text-gray-300 mb-2">Task Title *</label>
         <input
           type="text"
           name="title"
           value={formData.title}
           onChange={handleChange}
           required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="glass-input w-full"
           placeholder="Enter task title"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+        <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
         <textarea
           name="description"
           value={formData.description}
           onChange={handleChange}
           rows={4}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+          className="glass-input w-full resize-none"
           placeholder="Enter task description"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
           <select
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="glass-input w-full"
           >
             <option value="TODO">To Do</option>
             <option value="IN_PRODUCTION">In Production</option>
@@ -89,12 +89,12 @@ export function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Priority</label>
           <select
             name="priority"
             value={formData.priority}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="glass-input w-full"
           >
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -106,30 +106,30 @@ export function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
           <input
             type="date"
             name="startDate"
             value={formData.startDate}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="glass-input w-full"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Due Date</label>
           <input
             type="date"
             name="dueDate"
             value={formData.dueDate}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="glass-input w-full"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Estimated Hours</label>
+        <label className="block text-sm font-medium text-gray-300 mb-2">Estimated Hours</label>
         <input
           type="number"
           name="estimatedHours"
@@ -137,24 +137,24 @@ export function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
           onChange={handleChange}
           step="0.5"
           min="0"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="glass-input w-full"
           placeholder="Enter estimated hours"
         />
       </div>
 
-      <div className="flex gap-4 justify-end pt-4 border-t">
+      <div className="flex gap-4 justify-end pt-4 border-t border-white/10">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700"
+            className="btn-glass-secondary"
           >
             Cancel
           </button>
         )}
         <button
           type="submit"
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+          className="btn-glass"
         >
           {initialData ? 'Update Task' : 'Create Task'}
         </button>

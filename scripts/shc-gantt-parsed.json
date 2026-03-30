@@ -1,0 +1,488 @@
+{
+  "tasks": [
+    {
+      "property": "Chicago Ridge",
+      "deliverable": "Brochure",
+      "startDate": "2025-02-04",
+      "endDate": "2025-02-17",
+      "events": [
+        {
+          "col": 4,
+          "date": "2025-02-04",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 6,
+          "date": "2025-02-06",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 7,
+          "date": "2025-02-09",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 9,
+          "date": "2025-02-11",
+          "symbol": "X",
+          "type": "APPROVED"
+        },
+        {
+          "col": 11,
+          "date": "2025-02-13",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 13,
+          "date": "2025-02-17",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    },
+    {
+      "property": "Chicago Ridge",
+      "deliverable": "Wireframe",
+      "startDate": "2025-02-05",
+      "endDate": "2025-02-11",
+      "events": [
+        {
+          "col": 5,
+          "date": "2025-02-05",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 6,
+          "date": "2025-02-06",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 7,
+          "date": "2025-02-09",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 8,
+          "date": "2025-02-10",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 9,
+          "date": "2025-02-11",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    },
+    {
+      "property": "Chicago Ridge",
+      "deliverable": "Site",
+      "startDate": "2025-02-24",
+      "endDate": "2025-03-09",
+      "events": [
+        {
+          "col": 18,
+          "date": "2025-02-24",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 19,
+          "date": "2025-02-25",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 21,
+          "date": "2025-02-27",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 23,
+          "date": "2025-03-03",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 24,
+          "date": "2025-03-04",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 26,
+          "date": "2025-03-06",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 27,
+          "date": "2025-03-09",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    },
+    {
+      "property": "Orange Park Mall",
+      "deliverable": "Brochure",
+      "startDate": "2025-03-09",
+      "endDate": "2025-03-23",
+      "events": [
+        {
+          "col": 27,
+          "date": "2025-03-09",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 29,
+          "date": "2025-03-11",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 31,
+          "date": "2025-03-13",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 33,
+          "date": "2025-03-17",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 35,
+          "date": "2025-03-19",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 36,
+          "date": "2025-03-20",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 37,
+          "date": "2025-03-23",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    },
+    {
+      "property": "Orange Park Mall",
+      "deliverable": "Site",
+      "startDate": "2025-03-24",
+      "endDate": "2025-04-02",
+      "events": [
+        {
+          "col": 38,
+          "date": "2025-03-24",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 40,
+          "date": "2025-03-26",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 42,
+          "date": "2025-03-30",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 44,
+          "date": "2025-04-01",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 45,
+          "date": "2025-04-02",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    },
+    {
+      "property": "Melbourne",
+      "deliverable": "Brochure",
+      "startDate": "2025-03-25",
+      "endDate": "2025-04-08",
+      "events": [
+        {
+          "col": 39,
+          "date": "2025-03-25",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 41,
+          "date": "2025-03-27",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 43,
+          "date": "2025-03-31",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 45,
+          "date": "2025-04-02",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 47,
+          "date": "2025-04-06",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 48,
+          "date": "2025-04-07",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 49,
+          "date": "2025-04-08",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    },
+    {
+      "property": "Melbourne",
+      "deliverable": "Site",
+      "startDate": "2025-04-02",
+      "endDate": "2025-04-13",
+      "events": [
+        {
+          "col": 45,
+          "date": "2025-04-02",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 47,
+          "date": "2025-04-06",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 49,
+          "date": "2025-04-08",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 51,
+          "date": "2025-04-10",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 52,
+          "date": "2025-04-13",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    },
+    {
+      "property": "Layton Hills",
+      "deliverable": "Brochure",
+      "startDate": "2025-04-01",
+      "endDate": "2025-04-15",
+      "events": [
+        {
+          "col": 44,
+          "date": "2025-04-01",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 46,
+          "date": "2025-04-03",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 48,
+          "date": "2025-04-07",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 50,
+          "date": "2025-04-09",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 52,
+          "date": "2025-04-13",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 53,
+          "date": "2025-04-14",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 54,
+          "date": "2025-04-15",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    },
+    {
+      "property": "Layton Hills",
+      "deliverable": "Site",
+      "startDate": "2025-04-09",
+      "endDate": "2025-04-20",
+      "events": [
+        {
+          "col": 50,
+          "date": "2025-04-09",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 52,
+          "date": "2025-04-13",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 54,
+          "date": "2025-04-15",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 56,
+          "date": "2025-04-17",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 57,
+          "date": "2025-04-20",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    },
+    {
+      "property": "Park Plaza",
+      "deliverable": "Brochure",
+      "startDate": "2025-04-08",
+      "endDate": "2025-04-22",
+      "events": [
+        {
+          "col": 49,
+          "date": "2025-04-08",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 51,
+          "date": "2025-04-10",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 53,
+          "date": "2025-04-14",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 55,
+          "date": "2025-04-16",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 57,
+          "date": "2025-04-20",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 58,
+          "date": "2025-04-21",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 59,
+          "date": "2025-04-22",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    },
+    {
+      "property": "Park Plaza",
+      "deliverable": "Site",
+      "startDate": "2025-04-13",
+      "endDate": "2025-04-22",
+      "events": [
+        {
+          "col": 52,
+          "date": "2025-04-13",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 54,
+          "date": "2025-04-15",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 56,
+          "date": "2025-04-17",
+          "symbol": ">",
+          "type": "SUBMITTED"
+        },
+        {
+          "col": 58,
+          "date": "2025-04-21",
+          "symbol": "<",
+          "type": "FEEDBACK"
+        },
+        {
+          "col": 59,
+          "date": "2025-04-22",
+          "symbol": "X",
+          "type": "APPROVED"
+        }
+      ]
+    }
+  ]
+}

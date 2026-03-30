@@ -18,33 +18,33 @@ export function TaskCard({ task, onEdit, onDelete, onComment }: TaskCardProps) {
   const overdue = isOverdue(task.dueDate)
 
   return (
-    <div className={`bg-white rounded-lg border ${statusColor.border} p-4 hover:shadow-md transition`}>
+    <div className={`glass-card ${statusColor.border} p-4 hover:bg-white/10 transition`}>
       <div className="flex justify-between items-start mb-3">
-        <h3 className="font-semibold text-gray-900 flex-1">{task.title}</h3>
+        <h3 className="font-semibold text-white flex-1">{task.title}</h3>
         <div className="flex gap-2 ml-2">
           {onEdit && (
             <button
               onClick={() => onEdit(task)}
-              className="p-1 hover:bg-gray-100 rounded transition"
+              className="p-1 hover:bg-white/10 rounded transition"
               title="Edit task"
             >
-              <Edit2 size={16} className="text-gray-500" />
+              <Edit2 size={16} className="text-gray-400" />
             </button>
           )}
           {onDelete && (
             <button
               onClick={() => onDelete(task.id)}
-              className="p-1 hover:bg-gray-100 rounded transition"
+              className="p-1 hover:bg-white/10 rounded transition"
               title="Delete task"
             >
-              <Trash2 size={16} className="text-red-500" />
+              <Trash2 size={16} className="text-red-400" />
             </button>
           )}
         </div>
       </div>
 
       {task.description && (
-        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{task.description}</p>
+        <p className="text-sm text-gray-400 mb-3 line-clamp-2">{task.description}</p>
       )}
 
       <div className="flex flex-wrap gap-2 mb-3">
@@ -59,15 +59,15 @@ export function TaskCard({ task, onEdit, onDelete, onComment }: TaskCardProps) {
       <div className="space-y-2 text-sm">
         {task.dueDate && (
           <div className="flex items-center space-x-2">
-            <Clock size={14} className={overdue ? 'text-red-500' : 'text-gray-400'} />
-            <span className={overdue ? 'text-red-600 font-semibold' : 'text-gray-600'}>
+            <Clock size={14} className={overdue ? 'text-red-400' : 'text-gray-500'} />
+            <span className={overdue ? 'text-red-400 font-semibold' : 'text-gray-400'}>
               {overdue ? '⚠️ Overdue' : `Due in ${daysUntil} day${daysUntil !== 1 ? 's' : ''}`}
             </span>
           </div>
         )}
 
         {task.estimatedHours && (
-          <div className="flex items-center space-x-2 text-gray-600">
+          <div className="flex items-center space-x-2 text-gray-400">
             <span className="text-xs">⏱️ {task.estimatedHours}h estimated</span>
             {task.actualHours && (
               <span className="text-xs font-semibold">{task.actualHours}h actual</span>
@@ -79,7 +79,7 @@ export function TaskCard({ task, onEdit, onDelete, onComment }: TaskCardProps) {
       {onComment && (
         <button
           onClick={() => onComment(task)}
-          className="mt-3 w-full flex items-center justify-center space-x-2 px-3 py-2 border border-gray-200 rounded hover:bg-gray-50 transition text-sm font-medium text-gray-700"
+          className="mt-3 w-full flex items-center justify-center space-x-2 px-3 py-2 border border-white/10 rounded hover:bg-white/5 transition text-sm font-medium text-gray-400"
         >
           <MessageCircle size={14} />
           <span>Add comment</span>

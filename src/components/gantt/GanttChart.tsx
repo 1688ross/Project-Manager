@@ -101,6 +101,14 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
     }
   }
 
+  // Today marker position
+  const today = new Date()
+  const todayTime = today.getTime()
+  const minTime = minDate.getTime()
+  const maxTime = maxDate.getTime()
+  const todayPercent = ((todayTime - minTime) / (maxTime - minTime)) * 100
+  const showTodayLine = todayPercent >= 0 && todayPercent <= 100
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
@@ -110,7 +118,7 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
             <div className="w-64 flex-shrink-0 border-r border-gray-200 p-4 font-semibold text-sm text-gray-700">
               Milestones
             </div>
-            <div className="flex-1 flex">
+            <div className="flex-1 flex relative">
               {dateLabels.map((date, i) => (
                 <div
                   key={i}
@@ -120,6 +128,17 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
                   {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </div>
               ))}
+              {/* Today marker in header */}
+              {showTodayLine && (
+                <div
+                  className="absolute top-0 bottom-0 w-px bg-red-500 z-10 pointer-events-none"
+                  style={{ left: `${todayPercent}%` }}
+                >
+                  <div className="absolute -top-0 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-b whitespace-nowrap">
+                    Today
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -149,6 +168,13 @@ export function GanttChart({ tasks, onTaskClick }: GanttChartProps) {
 
                 {/* Gantt bar area */}
                 <div className="flex-1 relative h-20 bg-white">
+                  {/* Today vertical line */}
+                  {showTodayLine && (
+                    <div
+                      className="absolute top-0 bottom-0 w-px bg-red-500 z-10 pointer-events-none"
+                      style={{ left: `${todayPercent}%` }}
+                    />
+                  )}
                   {position.width > 0 && (
                     <div
                       className={`absolute top-1/2 transform -translate-y-1/2 h-8 rounded-full cursor-pointer transition-all ${statusColor.bg} border-2 ${statusColor.border}`}

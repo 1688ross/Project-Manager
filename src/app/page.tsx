@@ -8,34 +8,34 @@ export default function Home() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
+      <nav className="glass-nav sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/25">
                 PM
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                 Creative Manager
               </span>
             </div>
 
             {/* Desktop Menu */}
             <div className="hidden md:flex space-x-8">
-              <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 transition font-medium">
+              <Link href="/dashboard" className="text-gray-400 hover:text-white transition font-medium">
                 Dashboard
               </Link>
-              <Link href="/projects" className="text-gray-700 hover:text-blue-600 transition font-medium">
+              <Link href="/projects" className="text-gray-400 hover:text-white transition font-medium">
                 Projects
               </Link>
-              <Link href="/team" className="text-gray-700 hover:text-blue-600 transition font-medium">
-                Team
+              <Link href="/clients" className="text-gray-400 hover:text-white transition font-medium">
+                Clients
               </Link>
-              <Link href="/assets" className="text-gray-700 hover:text-blue-600 transition font-medium">
-                Assets
+              <Link href="/calendar" className="text-gray-400 hover:text-white transition font-medium">
+                Calendar
               </Link>
             </div>
 
@@ -43,19 +43,19 @@ export default function Home() {
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 href="/projects/new"
-                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+                className="btn-glass flex items-center space-x-2 text-white"
               >
                 <Plus size={18} />
                 <span>New Project</span>
               </Link>
-              <button className="text-gray-700 hover:text-gray-900">
+              <button className="text-gray-400 hover:text-white transition">
                 <Settings size={20} />
               </button>
             </div>
 
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden"
+              className="md:hidden text-gray-400"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -64,18 +64,18 @@ export default function Home() {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden pb-4 border-t">
-              <Link href="/dashboard" className="block py-2 px-0 text-gray-700 hover:text-blue-600">
+            <div className="md:hidden pb-4 border-t border-white/10">
+              <Link href="/dashboard" className="block py-2 px-0 text-gray-400 hover:text-white">
                 Dashboard
               </Link>
-              <Link href="/projects" className="block py-2 px-0 text-gray-700 hover:text-blue-600">
+              <Link href="/projects" className="block py-2 px-0 text-gray-400 hover:text-white">
                 Projects
               </Link>
-              <Link href="/team" className="block py-2 px-0 text-gray-700 hover:text-blue-600">
-                Team
+              <Link href="/clients" className="block py-2 px-0 text-gray-400 hover:text-white">
+                Clients
               </Link>
-              <Link href="/assets" className="block py-2 px-0 text-gray-700 hover:text-blue-600">
-                Assets
+              <Link href="/calendar" className="block py-2 px-0 text-gray-400 hover:text-white">
+                Calendar
               </Link>
             </div>
           )}
@@ -85,23 +85,23 @@ export default function Home() {
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-6">
             Creative Project Management
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
             Visualize your creative workflow with Gantt charts, manage assets, collaborate with clients, and keep your team aligned with daily task lists and real-time updates.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Link
               href="/projects"
-              className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold text-lg shadow-lg hover:shadow-xl"
+              className="btn-glass px-8 py-4 text-white font-semibold text-lg"
             >
               View Projects
             </Link>
             <Link
               href="/dashboard"
-              className="px-8 py-4 bg-white text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition font-semibold text-lg"
+              className="btn-glass-secondary px-8 py-4 text-gray-300 font-semibold text-lg"
             >
               Go to Dashboard
             </Link>
@@ -144,30 +144,30 @@ export default function Home() {
           ].map((feature, index) => (
             <div
               key={index}
-              className="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100"
+              className="glass-card p-8 hover:bg-white/10 transition"
             >
               <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+              <p className="text-gray-400">{feature.description}</p>
             </div>
           ))}
         </div>
 
         {/* Task Status Markers */}
-        <div className="mt-20 bg-white rounded-xl p-8 border border-gray-100 shadow-sm">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Project Status Tracking</h2>
+        <div className="mt-20 glass-card p-8">
+          <h2 className="text-2xl font-bold text-white mb-6">Project Status Tracking</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {[
-              { label: 'In Production', color: 'bg-blue-100 text-blue-800' },
-              { label: 'Sent to Client', color: 'bg-purple-100 text-purple-800' },
-              { label: 'Waiting Feedback', color: 'bg-yellow-100 text-yellow-800' },
-              { label: 'Making Changes', color: 'bg-orange-100 text-orange-800' },
-              { label: 'Submitting Final', color: 'bg-green-100 text-green-800' },
-              { label: 'Round 2 Review', color: 'bg-indigo-100 text-indigo-800' },
-              { label: 'Approved', color: 'bg-emerald-100 text-emerald-800' },
-              { label: 'Needs Printing', color: 'bg-pink-100 text-pink-800' },
-              { label: 'Launched', color: 'bg-teal-100 text-teal-800' },
-              { label: 'Completed', color: 'bg-gray-100 text-gray-800' },
+              { label: 'In Production', color: 'bg-blue-500/20 text-blue-300' },
+              { label: 'Sent to Client', color: 'bg-purple-500/20 text-purple-300' },
+              { label: 'Waiting Feedback', color: 'bg-yellow-500/20 text-yellow-300' },
+              { label: 'Making Changes', color: 'bg-orange-500/20 text-orange-300' },
+              { label: 'Submitting Final', color: 'bg-green-500/20 text-green-300' },
+              { label: 'Round 2 Review', color: 'bg-indigo-500/20 text-indigo-300' },
+              { label: 'Approved', color: 'bg-emerald-500/20 text-emerald-300' },
+              { label: 'Needs Printing', color: 'bg-pink-500/20 text-pink-300' },
+              { label: 'Launched', color: 'bg-teal-500/20 text-teal-300' },
+              { label: 'Completed', color: 'bg-slate-500/20 text-slate-300' },
             ].map((status, index) => (
               <div key={index} className={`px-3 py-2 rounded-lg text-center text-sm font-semibold ${status.color}`}>
                 {status.label}
@@ -178,8 +178,8 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 mt-20 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600">
+      <footer className="border-t border-white/10 mt-20 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
           <p>&copy; 2024 Creative Project Manager. Built for creative teams.</p>
         </div>
       </footer>

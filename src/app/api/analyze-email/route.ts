@@ -268,25 +268,50 @@ Rules:
 
 /* ── Database helpers ── */
 
+const STOP_WORDS = new Set(['and', 'the', 'for', 'with', 'from', 'that', 'this', 'will', 'are', 'was', 'have', 'has', 'had', 'but', 'not', 'you', 'all', 'can', 'her', 'was', 'one', 'our', 'out', 'day', 'get', 'use', 'its'])
+
+function extractKeywords(text: string): string[] {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 3 && !STOP_WORDS.has(w))
+}
+
+function scoreTaskMatch(taskTitle: string, searchText: string): number {
+  // Exact match is best
+  if (searchText.includes(taskTitle.toLowerCase())) return 10
+
+  // Keyword overlap scoring
+  const taskKeywords = extractKeywords(taskTitle)
+  if (taskKeywords.length === 0) return 0
+
+  const matches = taskKeywords.filter(kw => searchText.includes(kw))
+  return matches.length / taskKeywords.length
+}
+
 async function createMilestoneFromAnalysis(
   analysis: AnalysisResult,
   data: WorkScannerRequest['data'],
   prisma: any
 ) {
   const recentTasks = await prisma.task.findMany({
-    where: { project: { status: { in: ['ACTIVE', 'IN_PRODUCTION'] } } },
+    where: { project: { status: 'ACTIVE' } },
     select: { id: true, title: true },
-    take: 50,
+    take: 100,
   })
 
   const searchText = (
-    (data.subject || '') + ' ' + (data.body || '') + ' ' + (data.title || '') + ' ' + (data.description || '')
+    (data.subject || '') + ' ' + (data.body || '') + ' ' + (data.title || '') + ' ' + (data.description || '') +
+    ' ' + analysis.summary + ' ' + analysis.details
   ).toLowerCase()
 
   const matchedTaskIds = recentTasks
-    .filter((t: any) => t.title.length > 3 && searchText.includes(t.title.toLowerCase()))
-    .map((t: any) => t.id)
+    .map((t: any) => ({ id: t.id, score: scoreTaskMatch(t.title, searchText) }))
+    .filter(({ score }: { score: number }) => score > 0.4)
+    .sort((a: { score: number }, b: { score: number }) => b.score - a.score)
     .slice(0, 3)
+    .map(({ id }: { id: string }) => id)
 
   const sourceLabel = data.source === 'calendar' ? 'calendar' : data.from || 'unknown'
 

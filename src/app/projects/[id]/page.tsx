@@ -163,10 +163,10 @@ export default function ProjectDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading project...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading project...</p>
         </div>
       </div>
     )
@@ -174,11 +174,11 @@ export default function ProjectDetailPage() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
-          <p className="text-gray-600">{error || 'Project not found'}</p>
-          <Link href="/projects" className="mt-4 inline-block text-blue-600 hover:underline">
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="glass-modal rounded-2xl p-8 max-w-md">
+          <h2 className="text-2xl font-bold text-red-400 mb-4">Error</h2>
+          <p className="text-gray-400">{error || 'Project not found'}</p>
+          <Link href="/projects" className="mt-4 inline-block text-indigo-400 hover:text-indigo-300">
             ← Back to Projects
           </Link>
         </div>
@@ -191,43 +191,43 @@ export default function ProjectDetailPage() {
   const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen">
       {/* Project Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="glass-nav">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Link href="/projects" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
+          <Link href="/projects" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-300 mb-4 transition">
             <ArrowLeft size={14} /> Back to Projects
           </Link>
           <div className="flex justify-between items-start mb-6">
             <div className="flex-1 min-w-0">
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="text-4xl font-bold text-white mb-2">
                 {project.title}
               </h1>
               {project.description && (
-                <p className="text-gray-600 max-w-3xl">{project.description}</p>
+                <p className="text-gray-400 max-w-3xl">{project.description}</p>
               )}
             </div>
             <div className="flex items-center gap-3 ml-4">
               <span className={`px-4 py-2 rounded-full font-semibold text-sm ${
                 project.status === 'ACTIVE'
-                  ? 'bg-green-100 text-green-800'
+                  ? 'bg-emerald-500/20 text-emerald-300'
                   : project.status === 'ON_HOLD'
-                  ? 'bg-yellow-100 text-yellow-800'
+                  ? 'bg-yellow-500/20 text-yellow-300'
                   : project.status === 'COMPLETED'
-                  ? 'bg-blue-100 text-blue-800'
-                  : 'bg-gray-100 text-gray-800'
+                  ? 'bg-blue-500/20 text-blue-300'
+                  : 'bg-gray-500/20 text-gray-400'
               }`}>
                 {project.status}
               </span>
               <button
                 onClick={() => setModal('editProject')}
-                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                className="btn-glass-secondary flex items-center gap-1.5"
               >
                 <Pencil size={14} /> Edit
               </button>
               <button
                 onClick={() => setModal('deleteConfirm')}
-                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 transition"
+                className="btn-glass-danger flex items-center gap-1.5"
               >
                 <Trash2 size={14} /> Delete
               </button>
@@ -236,41 +236,45 @@ export default function ProjectDetailPage() {
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
-              <div className="flex items-center space-x-3">
-                <CheckCircle className="text-blue-600" size={24} />
+            <div className="stat-card group">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/15 to-blue-600/5" />
+              <div className="relative flex items-center space-x-3">
+                <CheckCircle className="text-blue-400" size={24} />
                 <div>
-                  <p className="text-sm text-gray-600">Progress</p>
-                  <p className="text-2xl font-bold text-gray-900">{completionPercentage}%</p>
+                  <p className="text-sm text-gray-400">Progress</p>
+                  <p className="text-2xl font-bold text-white">{completionPercentage}%</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4">
-              <div className="flex items-center space-x-3">
-                <Clock className="text-purple-600" size={24} />
+            <div className="stat-card group">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/15 to-purple-600/5" />
+              <div className="relative flex items-center space-x-3">
+                <Clock className="text-purple-400" size={24} />
                 <div>
-                  <p className="text-sm text-gray-600">Tasks</p>
-                  <p className="text-2xl font-bold text-gray-900">{completedTasks}/{totalTasks}</p>
+                  <p className="text-sm text-gray-400">Tasks</p>
+                  <p className="text-2xl font-bold text-white">{completedTasks}/{totalTasks}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4">
-              <div className="flex items-center space-x-3">
-                <Calendar className="text-orange-600" size={24} />
+            <div className="stat-card group">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-orange-500/15 to-orange-600/5" />
+              <div className="relative flex items-center space-x-3">
+                <Calendar className="text-orange-400" size={24} />
                 <div>
-                  <p className="text-sm text-gray-600">Start</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-gray-400">Start</p>
+                  <p className="text-2xl font-bold text-white">
                     {project.startDate ? new Date(project.startDate).toLocaleDateString() : 'N/A'}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4">
-              <div className="flex items-center space-x-3">
-                <Calendar className="text-red-600" size={24} />
+            <div className="stat-card group">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-red-500/15 to-red-600/5" />
+              <div className="relative flex items-center space-x-3">
+                <Calendar className="text-red-400" size={24} />
                 <div>
-                  <p className="text-sm text-gray-600">Due</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-sm text-gray-400">Due</p>
+                  <p className="text-2xl font-bold text-white">
                     {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'N/A'}
                   </p>
                 </div>
@@ -283,18 +287,18 @@ export default function ProjectDetailPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Gantt Chart */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Timeline</h2>
+        <div className="glass-card p-6 mb-8">
+          <h2 className="text-2xl font-bold text-white mb-4">Timeline</h2>
           <GanttChart tasks={tasks} />
         </div>
 
         {/* Tasks Section */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="glass-card p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Tasks</h2>
+            <h2 className="text-2xl font-bold text-white">Tasks</h2>
             <button
               onClick={() => setModal('addTask')}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+              className="btn-glass flex items-center gap-2 text-white"
             >
               <Plus size={16} /> Add Task
             </button>
@@ -304,7 +308,7 @@ export default function ProjectDetailPage() {
               <p className="text-gray-500 mb-4">No tasks yet</p>
               <button
                 onClick={() => setModal('addTask')}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                className="btn-glass inline-flex items-center gap-2 text-white"
               >
                 <Plus size={16} /> Create first task
               </button>
@@ -329,12 +333,12 @@ export default function ProjectDetailPage() {
 
       {/* Add Task */}
       {modal === 'addTask' && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mb-12 p-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
+          <div className="glass-modal rounded-2xl w-full max-w-lg mb-12 p-6 animate-scaleIn">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Add Task</h2>
-              <button onClick={closeModal} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
-                <X size={20} className="text-gray-500" />
+              <h2 className="text-xl font-bold text-white">Add Task</h2>
+              <button onClick={closeModal} className="p-1.5 hover:bg-white/10 rounded-xl transition">
+                <X size={20} className="text-gray-400" />
               </button>
             </div>
             <TaskForm
@@ -347,12 +351,12 @@ export default function ProjectDetailPage() {
 
       {/* Edit Task */}
       {modal === 'editTask' && selectedTask && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mb-12 p-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
+          <div className="glass-modal rounded-2xl w-full max-w-lg mb-12 p-6 animate-scaleIn">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Edit Task</h2>
-              <button onClick={closeModal} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
-                <X size={20} className="text-gray-500" />
+              <h2 className="text-xl font-bold text-white">Edit Task</h2>
+              <button onClick={closeModal} className="p-1.5 hover:bg-white/10 rounded-xl transition">
+                <X size={20} className="text-gray-400" />
               </button>
             </div>
             <TaskForm
@@ -376,12 +380,12 @@ export default function ProjectDetailPage() {
 
       {/* Edit Project */}
       {modal === 'editProject' && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mb-12 p-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-12 px-4 overflow-y-auto">
+          <div className="glass-modal rounded-2xl w-full max-w-lg mb-12 p-6 animate-scaleIn">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Edit Project</h2>
-              <button onClick={closeModal} className="p-1.5 hover:bg-gray-100 rounded-lg transition">
-                <X size={20} className="text-gray-500" />
+              <h2 className="text-xl font-bold text-white">Edit Project</h2>
+              <button onClick={closeModal} className="p-1.5 hover:bg-white/10 rounded-xl transition">
+                <X size={20} className="text-gray-400" />
               </button>
             </div>
             <ProjectForm
@@ -395,23 +399,23 @@ export default function ProjectDetailPage() {
 
       {/* Delete Confirmation */}
       {modal === 'deleteConfirm' && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Delete Project?</h2>
-            <p className="text-gray-600 mb-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+          <div className="glass-modal rounded-2xl w-full max-w-sm p-6 animate-scaleIn">
+            <h2 className="text-xl font-bold text-white mb-2">Delete Project?</h2>
+            <p className="text-gray-400 mb-6">
               This will permanently delete &ldquo;{project.title}&rdquo; and all its tasks. This cannot be undone.
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={closeModal}
-                className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                className="btn-glass-secondary"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteProject}
                 disabled={saving}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                className="btn-glass-danger disabled:opacity-50"
               >
                 {saving ? 'Deleting...' : 'Delete Project'}
               </button>

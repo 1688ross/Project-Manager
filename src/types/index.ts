@@ -137,3 +137,26 @@ export interface Meeting {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface ClientAccount {
+  id: string
+  name: string
+  email: string
+  logo?: string
+  createdAt: Date
+  updatedAt: Date
+  projects?: Project[]
+  branding?: BrandGuide[]
+  contacts?: ClientContact[]
+}
+
+export interface ClientContact {
+  id: string
+  clientId: string
+  name: string
+  email?: string
+  phone?: string
+  role?: string
+  primary: boolean
+  createdAt: Date
+}
